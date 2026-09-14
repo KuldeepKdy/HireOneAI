@@ -5,5 +5,7 @@
 <!-- express-http-proxy-> to proxy requests to another server (to acess services from gateway)-->
 <!-- morgan-> to log requests response on vd code terminal -->
 <!-- nodemon -> to run server continiously
+<!-- firebase-admin-> to connect to firebase with secured login process -->
+<!-- login process -> -->
 
 # hireOneAI
