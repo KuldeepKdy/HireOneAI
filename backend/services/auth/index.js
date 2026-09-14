@@ -2,6 +2,7 @@ import express from "express";
 
 // to excess env data in this file
 import dotenv from "dotenv";
+import { connectDB } from "./configs/db.js";
 dotenv.config();
 
 const app = express();
@@ -16,4 +17,5 @@ app.get("/", (req, res) => {
 // port ko listen karya hai
 app.listen(PORT, () => {
   console.log(`Auth-Service Started on ${PORT}`);
+  connectDB();
 });
