@@ -6,12 +6,13 @@ import { signInWithPopup } from "firebase/auth";
 import { FiX } from "react-icons/fi";
 import api from "../utils/axios";
 
-function LoginModel({ onClose }) {
+function LoginModel({ onClose, setUser }) {
   const handleGoogleAuth = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const token = await result.user.getIdToken();
       const response = await api.post("/api/auth/login", { token });
+      setUser(response?.data?.user);
       onClose();
       console.log(response.data);
     } catch (error) {

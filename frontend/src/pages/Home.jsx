@@ -5,7 +5,7 @@ import { FaArrowRight } from "react-icons/fa";
 import LoginModel from "../components/LoginModel";
 import { useState } from "react";
 
-function Home() {
+function Home({setUser}) {
   const [showLogin, setShowLogin] = useState(false);
   return (
     <div className="bg-white text-[#00A0A0] font-sans min-h-screen overflow-x-hidden">
@@ -38,7 +38,7 @@ function Home() {
       {/* main area */}
       <div className="relative pt-20 pb-14 overflow-hidden bg-[#F8F9FA]"></div>
 
-      {showLogin && <LoginModel onClose={() => setShowLogin(false)} />}
+      {showLogin && <LoginModel onClose={() => setShowLogin(false)} setUser={setUser} />}
     </div>
   );
 }

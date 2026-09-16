@@ -1,8 +1,8 @@
 import React from 'react'
 
-function Dashboard() {
+function Dashboard({ user,setUser }) {
   return (
-    <div>Dashboard</div>
+    <div>{user?.name}</div>
   )
 }
 
