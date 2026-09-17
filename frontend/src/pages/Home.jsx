@@ -5,6 +5,7 @@ import { FaArrowRight } from "react-icons/fa";
 import LoginModel from "../components/LoginModel";
 import { useState } from "react";
 import dashboard from "../assets/image.png";
+import { FiBarChart2, FiFileText, FiMic, FiTarget } from "react-icons/fi";
 
 function Home({ setUser }) {
   const [showLogin, setShowLogin] = useState(false);
@@ -86,7 +87,7 @@ function Home({ setUser }) {
               whileTap={{ scale: 0.97 }}
               className="relative gap-2 overflow-hidden bg-[#0A0A0A]/80 backdrop-blur-2xl text-white font-bold px-5 py-2.5 rounded-lg text-xs cursor-pointer border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all hover:border-white/20"
             >
-              <span className="flex items-center justify-center">
+              <span className="flex items-center justify-center gap-1">
                 Get Started For Free <FaArrowRight />
               </span>
               <span className="absolute inset-0 bg-gradient-to-br from-white/[0.1] via-transparent to-transparent pointer-events-none rounded-lg" />
@@ -110,11 +111,99 @@ function Home({ setUser }) {
       </section>
 
       {/* Agents  */}
-     
+      <section className="py-16 bg-[#F8F9FA]">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="text-center mb-10">
+            <div
+              className="inline-flex items-center px-3 py-1.5 
+            rounded-full border border-black/15 bg-black/5 text-black/70
+            text-xs font-medium mb-4"
+            >
+              AI Powered Agents
+            </div>
+
+            <h2
+              className="text-2xl md:text-4xl font-extrabold 
+            tracking-tight text-[#0A0A0A] [text-shadow:0_4px_20px_rgba(0,0,
+            0,0.1)]"
+            >
+              Specialized Agents For
+              <span className="block text-black/30">Every Interview Stage</span>
+            </h2>
+            <p className="text-black/40 text-sm max-w-2xl mx-auto mt-4 leading-relaxed">
+              HireOneAI combines multiple AI agents that work together to help
+              you build your resume, practice interviews, receive detailed
+              feedback, and follow a personalized roadmap to land your dream
+              job.
+            </p>
+          </div>
+          {[
+            {
+              icon: <FiFileText />,
+              title: "Resume Agent",
+              desc: "Create ATS-friendly resumes, improve profile strength and maximize interview opportunities.",
+            },
+            {
+              icon: <FiMic />,
+              title: "Interview Agent",
+              desc: "Conduct realistic HR, Technical and Coding interviews with AI-powered simulations.",
+            },
+            {
+              icon: <FiBarChart2 />,
+              title: "Feedback Agent",
+              desc: "Get detailed answer analysis, scoring reports and recommendations.",
+            },
+            {
+              icon: <FiTarget />,
+              title: "Skill Gap Agent",
+              desc: "Identify missing skills for your target role and get a personalized learning roadmap.",
+            },
+          ].map((agent, i) => {
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.45, delay: i * 0.08 }}
+              whileHover={{ y: -10, scale: 1.02 }}
+              className="group relative overflow-hidden bg-[#0A0A0A]/80 backdrop-blur-2xl border border-white/10 rounded-2xl p-5 shadow-[0_8px_32px_rgba(0,0,0,0.25)] hover:shadow-[0_16px_48px_rgba(0,0,0,0.4)] hover:border-white/20 transition-all"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent pointer-events-none" />
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+              <div className="relative">
+                <div className="w-11 h-11 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-center text-white text-lg mb-4 shadow-inner">
+                  {agent.icon}
+                </div>
+
+                <h2 className="text-base font-bold mb-2 text-white">
+                  {agent.title}
+                </h2>
+
+                <p className="text-white/45 text-xs leading-relaxed">
+                  {agent.desc}
+                </p>
+              </div>
+            </motion.div>;
+          })}
+        </div>
+      </section>
 
       {showLogin && (
         <LoginModel onClose={() => setShowLogin(false)} setUser={setUser} />
       )}
+
+      <footer className="border-t border-black/7 py-6 text-center bg-white">
+        <div className="flex items-center justify-center gap-2 mb-1.5">
+          <div className="w-5 h-5 rounded-md bg-[#0A0A0A] flex items-center justify-center">
+            <GiArtificialHive size={11} color="white" />
+          </div>
+          <span className="font-bold text-xs text-[#0A0A0A]/70">FresherAI</span>
+        </div>
+        <div className="text-black/30 text-xs">
+          © {new Date().getFullYear()} HireOneAI · All rights reserved
+        </div>
+      </footer>
     </div>
   );
 }
