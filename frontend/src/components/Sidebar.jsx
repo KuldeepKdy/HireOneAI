@@ -1,4 +1,4 @@
-import React from "react";
+
 import { motion, AnimatePresence } from "motion/react";
 import { GiArtificialHive, GiTwoCoins } from "react-icons/gi";
 import {
@@ -256,6 +256,20 @@ function Sidebar({
         >
           {inner}
         </motion.aside>
+
+        <AnimatePresence>
+          <AnimatePresence>
+            {mobileOpen && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setMobileOpen(false)}
+                className="fixed inset-0 bg-black/30 z-40 md:hidden backdrop-blur-sm"
+              />
+            )}
+          </AnimatePresence>
+        </AnimatePresence>
 
         <AnimatePresence>
           {mobileOpen && (
