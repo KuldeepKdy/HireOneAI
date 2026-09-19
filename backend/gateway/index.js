@@ -10,6 +10,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import { getCurrentUser } from "./controllers/user.controller.js";
 import { isAuth } from "./middleware/isAuth.js";
+import { proxyWithHeaders } from "./utils/proxyWithHeaders.js";
 
 const app = express();
 // to parse json data to frontend
@@ -36,7 +37,7 @@ app.get("/", (req, res) => {
 
 //auth service
 app.use("/api/auth", proxy(process.env.AUTH_SERVICE_URL));
-app.use("/api/resume", proxy(process.env.RESUME_SERVICE_URL));
+app.use("/api/resume",isAuth, proxyWithHeaders(process.env.RESUME_SERVICE_URL));
 app.get("/api/me", isAuth, getCurrentUser);
 
 
