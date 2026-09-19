@@ -9,6 +9,7 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
+// used to get session from cookie in backend 
 app.use(cookieParser());
 
 const PORT = process.env.PORT || 6001;
