@@ -15,6 +15,6 @@
 <!-- resume Service  -->
 <!-- multer-> to upload or store resume inside backend file system -->
  <!-- pdf-parser-> to extract text from pdf file -->
- <!-- GROQ(LLM) -> langchain package used to create resume agent docs available on on langchain website -->
+ <!-- GROQ(LLM agent) -> langchain package used to create resume agent docs available on on langchain website -->
 
 # hireOneAI
