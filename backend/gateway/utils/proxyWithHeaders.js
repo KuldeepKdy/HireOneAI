@@ -1,5 +1,7 @@
 //function to pass user id in header to resume service with proxy
-import { proxy } from "express-http-proxy";
+
+import proxy from "express-http-proxy";
+
 
 export const proxyWithHeaders = (serviceUrl) => {
   return proxy(serviceUrl, {

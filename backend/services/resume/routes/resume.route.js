@@ -1,6 +1,6 @@
 import express from "express";
 import { getResume, uploadResume } from "../controllers/resume.controller.js";
-import { upload } from "../middleware/multer.js";
+import upload from "../middleware/multer.js";
 
 const resumeRouter = express.Router();
 

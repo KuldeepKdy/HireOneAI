@@ -1,7 +1,7 @@
 //pdf ---> pdf Storage --> text --> llm --> agent --> promt --> data --> save mongoDb --> save redis --> pdf delete --> resume data (score, missing skills , recommen)
 
 import { resumeAgent } from "../agents/resume.agent.js";
-import extractText from "../configs/pd.js";
+import extractText from "../configs/pdf.js";
 import Resume from "../models/resume.model.js";
 import redis from "../../../shared/redis/redis.js";
 import fs from "fs";

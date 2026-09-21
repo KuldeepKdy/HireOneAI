@@ -65,7 +65,7 @@ const resumeSchema = new mongoose.Schema(
       default: "",
     },
     recommendations: {
-      type: [string],
+      type: [String],
       default: [],
     },
   },

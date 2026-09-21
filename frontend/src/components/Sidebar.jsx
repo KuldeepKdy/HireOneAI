@@ -10,7 +10,7 @@ import {
   FiLogOut,
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import { FaCirclePlus } from "react-icons/fa";
+import { FaCirclePlus } from "react-icons/fa6";
 
 const NAV_ITEMS = [
   {
