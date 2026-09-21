@@ -47,7 +47,7 @@ export const uploadResume = async (req, res) => {
 
     await redis.set(`resume:${userId}`, JSON.stringify(resume));
 
-    await fs.unlink(file.path);
+    await fs.unlinkSync(file.path);
 
     return res.status(200).json({
       success: true,
@@ -57,7 +57,7 @@ export const uploadResume = async (req, res) => {
   } catch (error) {
     console.log(error);
     if (file) {
-      await fs.unlink(file.path);
+      await fs.unlinkSync(file.path);
     }
     return res.status(500).json({
       success: false,
