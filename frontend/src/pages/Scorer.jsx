@@ -3,6 +3,8 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import { FiUploadCloud } from "react-icons/fi";
 import api from "../utils/axios.js";
+import { useDispatch, useSelector } from "react-redux";
+import { setResume } from "../redux/resumeSlice.js";
 
 const Navbar = ({ label }) => {
   const navigate = useNavigate();
@@ -34,6 +36,8 @@ const Navbar = ({ label }) => {
 function Scorer({ user, setUser }) {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { resume } = useSelector((state) => state.resume);
 
   const uploadResume = async () => {
     if (!file) {
@@ -44,8 +48,9 @@ function Scorer({ user, setUser }) {
       const formData = new FormData();
       formData.append("resume", file);
       const response = await api.post("/api/resume/upload", formData);
-    
-      console.log(response.data);
+
+      dispatch(setResume(response?.data?.data));
+      // console.log(response.data);
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -69,7 +74,7 @@ function Scorer({ user, setUser }) {
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 pointer-events-none" />
 
             <p className="relative text-[10px] text-white/40 tracking-widest uppercase mb-1.5">
-              Step 1 to 2
+              Step 1 to 2 {resume?.name}
             </p>
 
             <div className="relative w-full h-1 bg-white/10 rounded-full mb-4">
