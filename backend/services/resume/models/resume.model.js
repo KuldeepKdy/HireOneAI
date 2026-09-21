@@ -33,7 +33,7 @@ const resumeSchema = new mongoose.Schema(
       defalut: "",
     },
     education: {
-      type: [String],
+      type: [{}],
       default: [],
     },
     skills: {
@@ -41,11 +41,11 @@ const resumeSchema = new mongoose.Schema(
       default: [],
     },
     projects: {
-      type: [String],
+      type: [{}],
       default: [],
     },
     experience: {
-      type: [String],
+      type: [{}],
       default: [],
     },
     strengths: {

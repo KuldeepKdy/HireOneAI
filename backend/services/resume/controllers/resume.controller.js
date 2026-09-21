@@ -7,8 +7,8 @@ import redis from "../../../shared/redis/redis.js";
 import fs from "fs";
 
 export const uploadResume = async (req, res) => {
+  const file = req.file;
   try {
-    const file = req.file;
     if (!file) {
       return res.status(400).json({
         success: false,
@@ -47,7 +47,9 @@ export const uploadResume = async (req, res) => {
 
     await redis.set(`resume:${userId}`, JSON.stringify(resume));
 
-    await fs.unlinkSync(file.path);
+   if (fs.existsSync(file.path)) {
+     fs.unlinkSync(file.path);
+   }
 
     return res.status(200).json({
       success: true,
@@ -56,8 +58,8 @@ export const uploadResume = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    if (file) {
-      await fs.unlinkSync(file.path);
+    if (file && fs.existsSync(file.path)) {
+      fs.unlinkSync(file.path);
     }
     return res.status(500).json({
       success: false,

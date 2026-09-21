@@ -1,4 +1,5 @@
 import { SystemMessage, HumanMessage } from "@langchain/core/messages";
+import llm from "../configs/llm.js";
 
 export const resumeAgent = async (resumeText) => {
   const response = await llm.invoke([
