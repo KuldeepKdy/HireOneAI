@@ -6,10 +6,14 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { getCurrentUser } from "./apis/user.api";
 import Scorer from "./pages/Scorer.jsx";
+import { getResume } from "./apis/resume.api";
+import { useDispatch } from "react-redux";
+import { setResume } from "./redux/resumeSlice.js";
 
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const getUser = async () => {
@@ -18,6 +22,13 @@ function App() {
       setLoading(false);
     };
     getUser();
+  }, []);
+  useEffect(() => {
+    const getResumeData = async () => {
+      const result = await getResume();
+      dispatch(setResume(result.data));
+    };
+    getResumeData();
   }, []);
 
   if (loading) {

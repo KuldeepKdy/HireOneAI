@@ -5,6 +5,41 @@ import { FiUploadCloud } from "react-icons/fi";
 import api from "../utils/axios.js";
 import { useDispatch, useSelector } from "react-redux";
 import { setResume } from "../redux/resumeSlice.js";
+import { RadialBarChart, RadialBar, PolarAngleAxis } from "recharts";
+
+const ScoreRing = ({ score }) => {
+  const color = score >= 75 ? "#7c3aed" : score >= 50 ? "#f59e0b" : "#ef4444";
+
+  return (
+    <div className="relative flex items-center justify-center">
+      <RadialBarChart
+        width={110}
+        height={110}
+        cx={55}
+        cy={55}
+        innerRadius={40}
+        outerRadius={53}
+        startAngle={90}
+        endAngle={-270}
+        data={[{ value: score, fill: color }]}
+        barSize={8}
+      >
+        <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
+        <RadialBar
+          background={{ fill: "#e5e7eb" }}
+          dataKey="value"
+          cornerRadius={8}
+        />
+      </RadialBarChart>
+      <div className="absolute flex items-center">
+        <span className="text-lg font-bold text-white leading-none">
+          {score}
+        </span>
+        <span className="text-[9px] text-gray-200 mt-0.5">/100</span>
+      </div>
+    </div>
+  );
+};
 
 const Navbar = ({ label }) => {
   const navigate = useNavigate();
@@ -58,6 +93,50 @@ function Scorer({ user, setUser }) {
       setLoading(false);
     }
   };
+
+  // /score section
+  if (resume) {
+    return (
+      <div className="min-h-screen bg-white text-[#0A0A0A]">
+        <Navbar label="Resume Scorer" />
+        <section className="max-w-6xl mx-auto px-3 pt-18 sm:pt-20 pb-8 space-y-3.5">
+          {/* header */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-[10px] text-black/40 tracking-widest uppercase mb-0.5">
+                Resume Analysis
+              </p>
+
+              <h2 className="text-lg font-bold">{resume?.name}</h2>
+            </div>
+
+            <button
+              onClick={() => dispatch(setResume(null))}
+              className="text-[10px] sm:text-xs text-black/50 hover:text-[#0A0A0A] border border-black/15 hover:border-black/35 px-2.5 py-1 rounded-lg transition-colors"
+            >
+              Re-upload
+            </button>
+          </div>
+
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.05 }}
+            className="relative overflow-hidden bg-[#000000]/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 flex flex-col items-center gap-4 sm:flex-row shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent pointer-events-none" />
+
+            <div className="relative">
+              <ScoreRing score={resume?.score} />
+            </div>
+            <div>
+              
+            </div>
+          </motion.div>
+        </section>
+      </div>
+    );
+  }
   // /upload section
   return (
     <div>
@@ -74,7 +153,7 @@ function Scorer({ user, setUser }) {
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 pointer-events-none" />
 
             <p className="relative text-[10px] text-white/40 tracking-widest uppercase mb-1.5">
-              Step 1 to 2 {resume?.name}
+              Step 1 to 2
             </p>
 
             <div className="relative w-full h-1 bg-white/10 rounded-full mb-4">
