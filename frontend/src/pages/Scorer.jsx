@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { useState } from "react";
-import { FiUploadCloud } from "react-icons/fi";
+import { FiAlertCircle, FiUploadCloud, FiUser } from "react-icons/fi";
 import api from "../utils/axios.js";
 import { useDispatch, useSelector } from "react-redux";
 import { setResume } from "../redux/resumeSlice.js";
@@ -37,6 +37,23 @@ const ScoreRing = ({ score }) => {
         </span>
         <span className="text-[9px] text-gray-200 mt-0.5">/100</span>
       </div>
+    </div>
+  );
+};
+
+const Tag = ({ text, color }) => {
+  const styles = {
+    purple: "bg-purple-50 text-purple-700 border-purple-200",
+    red: "bg-red-50 text-red-700 border-red-200",
+    green: "bg-green-50 text-green-700 border-green-200",
+    yellow: "bg-yellow-50 text-yellow-700 border-yellow-200",
+  };
+
+  return (
+    <div
+      className={`text-[10px] px-1.5 py-1 rounded-md border font-medium ${styles[color]}`}
+    >
+      {text}
     </div>
   );
 };
@@ -129,10 +146,74 @@ function Scorer({ user, setUser }) {
             <div className="relative">
               <ScoreRing score={resume?.score} />
             </div>
-            <div>
-              
+            <div className="relative">
+              <p className="text-white/50 text-xs mb-0.5">Resume Score</p>
+
+              <p className="text-lg sm:text-xl font-bold mb-1.5 text-white">
+                {resume?.score >= 75
+                  ? "Strong"
+                  : resume?.score >= 50
+                    ? "Average"
+                    : "Needs Work"}
+              </p>
+
+              <div className="flex items-center gap-1.5">
+                <FiUser className="text-purple-400 text-xs" />
+
+                <span className="text-xs text-purple-300">
+                  {resume?.suggestedRole}
+                </span>
+              </div>
             </div>
           </motion.div>
+
+          <div classname="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.05 }}
+              className="relative overflow-hidden bg-[#000000]/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-4  sm:flex-row shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent pointer-events-none" />
+
+              <div className="relative flex items-center gap-1.5 mb-2.5">
+                <FiAlertCircle className="text-green-400" size={14} />
+                <span className="text-xs font-semibold text-white">
+                  Strengths
+                </span>
+              </div>
+
+              <div className="relative flex flex-wrap gap-1.5">
+                {resume?.strengths?.map((s) => (
+                  <Tag key={s} text={s} color="green" />
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.05 }}
+              className="relative overflow-hidden bg-[#000000]/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-4  sm:flex-row shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent pointer-events-none" />
+
+              <div className="relative flex items-center gap-1.5 mb-2.5">
+                <FiAlertCircle className="text-yellow-400" size={14} />
+                <span className="text-xs font-semibold text-white">
+                  Weaknesses
+                </span>
+              </div>
+
+              <div className="relative flex flex-wrap gap-1.5">
+                {resume?.weaknesses?.map((s) => (
+                  <Tag key={s} text={s} color="yellow" />
+                ))}
+              </div>
+            </motion.div>
+
+            
+          </div>
         </section>
       </div>
     );
