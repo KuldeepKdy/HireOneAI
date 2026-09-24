@@ -1,7 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { useState } from "react";
-import { FiAlertCircle, FiUploadCloud, FiUser } from "react-icons/fi";
+import {
+  FiAlertCircle,
+  FiUploadCloud,
+  FiUser,
+  FiZap,
+  FiTrendingUp,
+} from "react-icons/fi";
 import api from "../utils/axios.js";
 import { useDispatch, useSelector } from "react-redux";
 import { setResume } from "../redux/resumeSlice.js";
@@ -134,7 +140,7 @@ function Scorer({ user, setUser }) {
               Re-upload
             </button>
           </div>
-
+          {/* Score  */}
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -166,7 +172,7 @@ function Scorer({ user, setUser }) {
               </div>
             </div>
           </motion.div>
-
+          {/* Weakness and Strengths */}
           <div classname="grid grid-cols-1 gap-3 md:grid-cols-2">
             <motion.div
               initial={{ y: 20, opacity: 0 }}
@@ -211,9 +217,52 @@ function Scorer({ user, setUser }) {
                 ))}
               </div>
             </motion.div>
-
-            
           </div>
+
+          {/* Missing Skills  */}
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.05 }}
+            className="relative overflow-hidden bg-[#000000]/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-4  sm:flex-row shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent pointer-events-none" />
+
+            <div className="relative flex items-center gap-1.5 mb-2.5">
+              <FiZap className="text-red-400" size={14} />
+              <span className="text-xs font-semibold text-white">
+                Missing Skills
+              </span>
+            </div>
+
+            <div className="relative flex flex-wrap gap-1.5">
+              {resume?.missingSkills?.map((s) => (
+                <Tag key={s} text={s} color="yellow" />
+              ))}
+            </div>
+          </motion.div>
+          {/* Recommendations  */}
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.05 }}
+            className="relative overflow-hidden bg-[#000000]/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-4  sm:flex-row shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent pointer-events-none" />
+
+            <div className="relative flex items-center gap-1.5 mb-2.5">
+              <FiTrendingUp className="text-purple-400" size={14} />
+              <span className="text-xs font-semibold text-white">
+                Recommendations
+              </span>
+            </div>
+
+            <div className="relative flex flex-wrap gap-1.5">
+              {resume?.recommendations?.map((s) => (
+                <Tag key={s} text={s} color="purple" />
+              ))}
+            </div>
+          </motion.div>
         </section>
       </div>
     );
