@@ -27,7 +27,7 @@ function App() {
   useEffect(() => {
     const getResumeData = async () => {
       const result = await getResume();
-      dispatch(setResume(result.data));
+      dispatch(setResume(result?.data));
     };
     getResumeData();
   }, []);
