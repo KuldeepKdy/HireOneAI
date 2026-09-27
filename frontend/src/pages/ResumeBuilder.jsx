@@ -4,6 +4,7 @@ import initialData from "../components/resume/initialData.js";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { FiArrowLeft, FiArrowRight, FiEye } from "react-icons/fi";
+import PreviewResume from "../components/resume/PreviewResume.jsx";
 
 const STEPS = [
   {
@@ -30,6 +31,7 @@ const TOTAL_STEPS = STEPS.length;
 function ResumeBuilder({ user, setUser }) {
   const [currentStep, setCurrentStep] = useState(5);
   const [data, setData] = useState(initialData);
+  const [showPreview, setShowPreview] = useState(false);
   const navigate = useNavigate();
   const progressPct = (currentStep / TOTAL_STEPS) * 100;
   const activeStep = STEPS.find((s) => s.step === currentStep);
@@ -45,6 +47,18 @@ function ResumeBuilder({ user, setUser }) {
   };
 
   const isLastStep = currentStep === STEPS.length;
+
+  if (showPreview) {
+    return (
+      <PreviewResume
+        data={data}
+        onBack={() => setShowPreview(false)}
+        user={user}
+        setUser={setUser}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white text-[#0A0A0A] flex flex-col">
       <motion.nav
@@ -65,7 +79,10 @@ function ResumeBuilder({ user, setUser }) {
               Resume Builder
             </span>
           </div>
-          <button className="flex h-8 items-center justify-center rounded-lg border border-black/15 text-black/60 transition px-2 hover:border-[#A0A0A0] hover:text-[#0A0A0A]">
+          <button
+            onClick={() => setShowPreview(true)}
+            className="flex h-8 items-center justify-center rounded-lg border border-black/15 text-black/60 transition px-2 hover:border-[#A0A0A0] hover:text-[#0A0A0A]"
+          >
             <FiEye size={13} />
           </button>
         </div>
@@ -131,10 +148,8 @@ function ResumeBuilder({ user, setUser }) {
 
             {isLastStep ? (
               <button
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg
-      text-xs font-semibold bg-[#000000]/90 backdrop-blur-2xl border
-      border-white/10 text-white shadow-[0_8px_24px_rgba(0,0,0,0.25)]
-      hover:border-white/20 transition-all"
+                onClick={() => setShowPreview(true)}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold bg-[#000000]/90 backdrop-blur-2xl border border-white/10 text-white shadow-[0_8px_24px_rgba(0,0,0,0.25)] hover:border-white/20 transition-all"
               >
                 <FiEye size={13} />
                 <span className="hidden sm:block">Preview Resume</span>
