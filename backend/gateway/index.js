@@ -39,6 +39,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", proxy(process.env.AUTH_SERVICE_URL));
 app.use("/api/resume",isAuth, proxyWithHeaders(process.env.RESUME_SERVICE_URL));
 app.get("/api/me", isAuth, getCurrentUser);
+app.use("/api/interview",isAuth, proxyWithHeaders(process.env.INTERVIEW_SERVICE_URL));
 
 
 // port ko listen karya hai
