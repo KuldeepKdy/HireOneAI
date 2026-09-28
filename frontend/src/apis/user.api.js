@@ -8,3 +8,12 @@ export const getCurrentUser = async () => {
     return null;
   }
 };
+
+export const useCoins = async (data) => {
+  try {
+    const response = await api.post("/api/auth/use-coins", data);
+    return response.data;
+  } catch (error) {
+    return null;
+  }
+};
