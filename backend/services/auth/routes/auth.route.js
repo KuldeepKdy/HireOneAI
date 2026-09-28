@@ -8,6 +8,6 @@ authRouter.post("/login", GoogleAuth);
 
 authRouter.get("/logout", logOut);
 
-uthRouter.get("/use-coins", useCoins);
+authRouter.get("/use-coins", useCoins);
 
 export default authRouter;
