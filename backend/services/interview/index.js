@@ -3,7 +3,7 @@ import express from "express";
 // to excess env data in this file
 import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
-
+import interviewRouter from "./routes/interview.route.js";
 
 dotenv.config();
 
@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
   res.send("hello from interview-Service");
 });
 
-
+app.use("/", interviewRouter);
 
 // port ko listen karya hai
 app.listen(PORT, () => {
