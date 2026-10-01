@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import maleVideo from "../../assets/male-ai.mp4";
 import femaleVideo from "../../assets/female-ai.mp4";
 import { AnimatePresence, motion } from "motion/react";
 import { FiCamera, FiCameraOff, FiCode, FiMic, FiMicOff } from "react-icons/fi";
+import CodeEditor from "./CodeEditor";
 function Step2interview({ interviewData, user }) {
   // — State —
   const [question, setQuestion] = useState(interviewData.question);
@@ -38,8 +39,83 @@ function Step2interview({ interviewData, user }) {
 
   const showMicon = micOn && !isAIPlaying;
 
+  //speach recognition
+  useEffect(() => {
+    if (!("webkitSpeechRecognition" in window)) return;
+
+    const rec = new window.webkitSpeechRecognition();
+
+    rec.lang = "en-US";
+    rec.continuous = true;
+    rec.interimResults = false;
+
+    rec.onresult = (e) => {
+      const t = e.results[e.results.length - 1][0].transcript;
+      setAnswer((prev) => (prev ? prev + " " + t : t));
+    };
+
+    recognitionRef.current = rec;
+  }, []);
+
+  const startMic = () => {
+    recognitionRef.current?.start();
+  };
+  const stopMic = () => {
+    recognitionRef.current?.stop();
+  };
+
+  const toggleMic = () => {
+    if (micOn) {
+      stopMic();
+    } else {
+      startMic();
+    }
+    setMicOn(!micOn);
+  };
+
+  const toggleCamera = async () => {
+    if (cameraOn) {
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+      setCameraOn(false);
+    } else {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
+
+        streamRef.current = stream;
+        setCameraOn(true);
+
+        setTimeout(() => {
+          if (userVideoRef.current) {
+            userVideoRef.current.srcObject = stream;
+          }
+        }, 100);
+      } catch (error) {
+        console.error("Camera access denied:", error);
+        setCameraOn(false);
+      }
+    }
+  };
+
+  const handleSubmitCode = (code) => {
+    setAnswer((prev) => {
+      const separator = prev.trim() ? "\n\n--- Code ---\n" : "--- Code ---\n";
+
+      return prev + separator + code;
+    });
+    setCodeOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-3 sm:p-5">
+      {codeOpen && (
+        <CodeEditor
+          onClose={() => setCodeOpen(false)}
+          onSubmitCode={handleSubmitCode}
+        />
+      )}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -130,6 +206,7 @@ function Step2interview({ interviewData, user }) {
           <div className="flex flex-col items-center gap-1.5 pt-1">
             <div className="flex items-center justify-center gap-3">
               <motion.button
+                onClick={toggleMic}
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.93 }}
                 className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${
@@ -141,6 +218,7 @@ function Step2interview({ interviewData, user }) {
                 {showMicon ? <FiMic size={15} /> : <FiMicOff size={15} />}
               </motion.button>
               <motion.button
+                onClick={toggleCamera}
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.93 }}
                 className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${
