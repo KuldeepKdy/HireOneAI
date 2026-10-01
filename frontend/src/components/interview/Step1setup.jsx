@@ -1,15 +1,80 @@
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
-import { FiArrowLeft, FiBriefcase, FiCheck } from "react-icons/fi";
+import {
+  FiArrowLeft,
+  FiArrowRight,
+  FiBriefcase,
+  FiCheck,
+  FiCheckCircle,
+  FiUploadCloud,
+} from "react-icons/fi";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useCoins } from "../../apis/user.api";
+import api from "../../utils/axios";
+import { setResume } from "../../redux/resumeSlice";
+import { startInterview } from "../../apis/interview.api.js";
 
 function Step1setup({ user, setUser }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { resume } = useSelector((state) => state.resume);
   const [role, setRole] = useState("");
   const [type, setType] = useState("technical");
   const [useResume, setUseResume] = useState(!!resume);
+  const [file, setFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [starting, setStarting] = useState(false);
+
+  const uploadResume = async () => {
+    if (!file) {
+      alert("Please upload a resume");
+    }
+    try {
+      setUploading(true);
+      const coinResponse = await useCoins({
+        coins: 10,
+        action: "resume-scorer",
+      });
+
+      setUser((prev) => ({
+        ...prev,
+        interviewCoin: coinResponse?.interviewCoin,
+      }));
+
+      const formData = new FormData();
+      formData.append("resume", file);
+      const response = await api.post("/api/resume/upload", formData);
+
+      dispatch(setResume(response?.data?.data));
+      // console.log(response.data);
+      setUploading(false);
+      setFile(null);
+    } catch (error) {
+      console.log(error);
+      alert("Upload failed");
+      setUploading(false);
+    }
+  };
+
+  const start = async () => {
+    setStarting(true);
+    const response = await startInterview({ role, type, useResume, resume });
+
+    if (response) {
+      const coinResponse = await useCoins({
+        coins: 50,
+        action: "start-interview",
+      });
+
+      setUser((prev) => ({
+        ...prev,
+        interviewCoin: coinResponse?.interviewCoin,
+      }));
+    }
+    setStarting(false);
+    navigate(`/interview/${response?.interviewId}`);
+  };
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-3 sm:p-5">
       <motion.div
@@ -138,8 +203,101 @@ function Step1setup({ user, setUser }) {
               </div>
             </div>
 
-            
+            {resume && useResume && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="rounded-xl border border-green-500/20 bg-green-500/5 p-4"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 shrink-0 rounded-lg bg-green-500 flex items-center justify-center">
+                    <iFileText size={15} className="text-white" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-sm font-semibold text-white">
+                      Resume Ready{" "}
+                      <span className="text-gray-400">
+                        {resume?.suggestedRole}
+                      </span>
+                    </h4>
+                    <p className="text-xs text-zinc-400">
+                      Resume detected successfully.
+                    </p>
+                  </div>
+                  <FiCheckCircle
+                    size={18}
+                    className="text-green-400 shrink-0"
+                  />
+                </div>
+              </motion.div>
+            )}
+
+            {useResume && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="rounded-xl border-2 border-dashed border-white/10 bg-[#17181E] p-4"
+              >
+                <label className="block cursor-pointer">
+                  <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white p-4">
+                    <FiUploadCloud size={20} className="text-black" />
+                    <div>
+                      <h3 className="text-sm font-semibold text-black">
+                        Upload Resume
+                      </h3>
+                      <p className="mt-0.5 text-xs text-zinc-600">
+                        {resume
+                          ? "Resume detected. Upload a new resume anytime to update your interview questions."
+                          : "Upload your resume to generate personalized interview questions."}
+                      </p>
+                    </div>
+                  </div>
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    className="hidden"
+                    // value={file}
+                    onChange={(e) => {
+                      if (e.target.files[0]) {
+                        setFile(e.target.files[0]);
+                      }
+                    }}
+                  />
+                </label>
+
+                {file && (
+                  <div className="mt-4 rounded-lg bg-black/20 border border-white/10 p-2.5">
+                    <p className="text-xs text-zinc-300 truncate">
+                      {file.name}
+                    </p>
+                    <button
+                      onClick={uploadResume}
+                      disabled={uploading}
+                      className="mt-3 w-full h-10 rounded-xl bg-white text-black text-sm font-semibold hover:opacity-90 transition disabled:opacity-60"
+                    >
+                      {uploading ? "Uploading..." : "Upload"}
+                    </button>
+                  </div>
+                )}
+              </motion.div>
+            )}
           </div>
+
+          <motion.button
+            onClick={start}
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.98 }}
+            disabled={!role || starting || (useResume && !resume)}
+            className="mt-5 h-12 rounded-xl bg-white text-black text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-40 transition"
+          >
+            {starting ? (
+              "Starting Interview..."
+            ) : (
+              <>
+                Start Interview <FiArrowRight size={15} />
+              </>
+            )}
+          </motion.button>
         </div>
       </motion.div>
     </div>
