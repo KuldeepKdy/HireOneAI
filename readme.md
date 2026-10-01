@@ -19,5 +19,7 @@
  <!-- redus-> to store resume data to access it from anywhere in resume service -->
  <!-- recharts-> to create charts in resume service -->
  <!-- react-to-print -> to print resume --> 
+ <!-- monaco-editor-> to create code editor in interview -->
+ <!-- circular-progressbar-> to create circular progress bar in interview -->
 
 # hireOneAI

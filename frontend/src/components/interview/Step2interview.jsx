@@ -2,8 +2,17 @@ import { useState, useEffect, useRef } from "react";
 import maleVideo from "../../assets/male-ai.mp4";
 import femaleVideo from "../../assets/female-ai.mp4";
 import { AnimatePresence, motion } from "motion/react";
-import { FiCamera, FiCameraOff, FiCode, FiMic, FiMicOff } from "react-icons/fi";
+import {
+  FiCamera,
+  FiCameraOff,
+  FiCode,
+  FiMic,
+  FiMicOff,
+  FiClock,
+  FiMessageSquare,
+} from "react-icons/fi";
 import CodeEditor from "./CodeEditor";
+import Timer from "./Timer";
 function Step2interview({ interviewData, user }) {
   // — State —
   const [question, setQuestion] = useState(interviewData.question);
@@ -107,6 +116,12 @@ function Step2interview({ interviewData, user }) {
     });
     setCodeOpen(false);
   };
+
+  useEffect(() => {
+    if (timeLeft <= 0 || !timerActive) return;
+    const t = setInterval(() => setTimeLeft((p) => p - 1), 1000);
+    return () => clearInterval(t);
+  }, [timeLeft, timerActive]);
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-3 sm:p-5">
@@ -256,6 +271,7 @@ function Step2interview({ interviewData, user }) {
         </div>
 
         {/* right */}
+       
       </motion.div>
     </div>
   );
