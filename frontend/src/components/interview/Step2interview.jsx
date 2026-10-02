@@ -10,6 +10,7 @@ import {
   FiMicOff,
   FiClock,
   FiMessageSquare,
+  FiArrowRight,
 } from "react-icons/fi";
 import CodeEditor from "./CodeEditor";
 import Timer from "./Timer";
@@ -45,7 +46,7 @@ function Step2interview({ interviewData, user }) {
   const streamRef = useRef(null);
 
   const videoSource = voiceGender === "female" ? femaleVideo : maleVideo;
-
+  const progress = ((currentIndex + 1) / interviewData.totalQuestions) * 100;
   const showMicon = micOn && !isAIPlaying;
 
   //speach recognition
@@ -271,7 +272,126 @@ function Step2interview({ interviewData, user }) {
         </div>
 
         {/* right */}
-       
+        <div className="flex flex-col p-4 sm:p-6">
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <h2 className="text-base sm:text-lg font-semibold text-white">
+                AI Interview
+              </h2>
+
+              <div className="flex items-center gap-2 text-zinc-500 text-xs mt-0.5">
+                <FiClock size={11} />
+                <span>{question.difficulty}</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-end gap-1.5 min-w-[110px]">
+              <Timer timeLeft={timeLeft} totalTime={question.timer} />
+            </div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="overflow-hidden rounded-xl border border-white/8 bg-[#17181E]"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-transparent to-transparent pointer-events-none" />
+            <div className="relative flex items-center gap-2.5 mb-3">
+              <div className="w-8 h-8 rounded-lg bg-white text-black flex items-center justify-center shrink-0">
+                <FiMessageSquare size={14} />
+              </div>
+              <p className="text-xs text-zinc-500">
+                Question {currentIndex + 1}
+              </p>
+            </div>
+
+            <p className="relative text-white text-sm sm:text-base leading-7">
+              {question.question}
+            </p>
+          </motion.div>
+
+          <div className="mb-3">
+            <div className="flex justify-between text-[10px] text-white/35 mb-1">
+              <span>Progress</span>
+              <span>
+                {currentIndex + 1}/{interviewData.totalQuestions}
+              </span>
+            </div>
+            <div className="w-full h-1 rounded-full bg-white/10 overflow-hidden">
+              <div
+                className="h-full bg-white rounded-full transition-all duration-500"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+
+          <div className="flex-1 flex flex-col min-h-0">
+            <label className="text-xs font-medium text-zinc-400 mb-1.5">
+              Your Answer
+            </label>
+            <textarea
+              onChange={(e) => setAnswer(e.target.value)}
+              value={answer}
+              rows={5}
+              onKeyDown={(e) => {
+                if (e.ctrlKey && e.key === "Enter") alert("Submit Answer");
+              }}
+              placeholder="Write your answer here... or speak if mic is on"
+              className="flex-1 w-full rounded-xl bg-[#17181E] border border-white p-4 text-sm text-white outline-none resize-none focus:border-white/25 transition placeholder-white/20"
+            />
+          </div>
+
+          <div className="mt-3 min-h-[0px]">
+            <AnimatePresence>
+              {feedback && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 6 }}
+                  className="rounded-xl border border-green-500/20 bg-green-500/5 p-4 max-h-40 overflow-auto"
+                >
+                  <p className="text-xs uppercase tracking-widest text-green-400 mb-2">
+                    AI Feedback
+                  </p>
+
+                  <p className="text-sm text-zinc-300 leading-6">
+                    {feedback.feedback}
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-white/8">
+            <span className="text-xs text-zinc-600 hidden sm:block">
+              Press{" "}
+              <span className="mx-1 rounded bg-white/10 px-1.5 py-0.5 text-white text-[10px]">
+                Ctrl+Enter
+              </span>{" "}
+              to Submit
+            </span>
+
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => alert("Submit Answer")}
+              disabled={loading || !answer.trim()}
+              className="ml-auto h-10 min-w-[150px] justify-center px-5 rounded-xl bg-white text-[#0A0A0A] font-semibold text-sm flex items-center gap-2 disabled:opacity-40 transition"
+            >
+              {loading ? (
+                <>
+                  <div className="w-3.5 h-3.5 rounded-full border-2 border-black border-t-transparent animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  Submit Answer
+                  <FiArrowRight size={15} />
+                </>
+              )}
+            </motion.button>
+          </div>
+        </div>
       </motion.div>
     </div>
   );
