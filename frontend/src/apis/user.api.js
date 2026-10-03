@@ -14,6 +14,8 @@ export const useCoins = async (data) => {
     const response = await api.post("/api/auth/use-coins", data);
     return response.data;
   } catch (error) {
-    return null;
+    console.log(error);
+    throw error;
+    // return null;
   }
 };

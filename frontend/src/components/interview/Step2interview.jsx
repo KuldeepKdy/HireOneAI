@@ -211,7 +211,7 @@ function Step2interview({ interviewData, user }) {
       await new Promise((r) => setTimeout(r, 1200));
 
       await speakText(
-        `Welcome ${user?.userName.split(" ")[0] ?? "User"}! Let's begin your interview.`,
+        `Welcome ${user?.name.split(" ")[0] ?? "User"}! Let's begin your interview.`,
       );
 
       await new Promise((r) => setTimeout(r, 900));
@@ -244,7 +244,46 @@ function Step2interview({ interviewData, user }) {
     setTimerActive(true);
   }, [question]);
 
+  const submit = async () => {
+    if (!answer.trim()) return;
 
+    setTimerActive(false);
+    setLoading(true);
+    const res = await submitAnswer({
+      interviewId: interviewData.interviewId,
+      answer,
+    });
+
+    if (res.completed) {
+      setFeedback(res.feedback);
+
+      await new Promise((r) => setTimeout(r, 700));
+
+      await speakText(
+        res.feedback?.feedback ||
+          "Great job! Your interview is complete. Preparing your report now.",
+      );
+
+      setLoading(false);
+      navigate(`/interview/${interviewData.interviewId}/report`);
+      return;
+    }
+
+    setFeedback(res.feedback);
+
+    await new Promise((r) => setTimeout(r, 700));
+
+    await speakText(
+      res.feedback?.feedback ||
+        "Noted your answer. Let's move to the next question.",
+    );
+
+    setLoading(false);
+    setQuestion(res.question);
+    setCurrentIndex(res.currentQuestion);
+    setAnswer("");
+    setFeedback(null);
+  };
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-3 sm:p-5">
@@ -456,7 +495,7 @@ function Step2interview({ interviewData, user }) {
               value={answer}
               rows={5}
               onKeyDown={(e) => {
-                if (e.ctrlKey && e.key === "Enter") alert("Submit Answer");
+                if (e.ctrlKey && e.key === "Enter") submit();
               }}
               placeholder="Write your answer here... or speak if mic is on"
               className="flex-1 w-full rounded-xl bg-[#17181E] border border-white p-4 text-sm text-white outline-none resize-none focus:border-white/25 transition placeholder-white/20"
@@ -496,7 +535,7 @@ function Step2interview({ interviewData, user }) {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => alert("Submit Answer")}
+              onClick={() => submit()}
               disabled={loading || !answer.trim()}
               className="ml-auto h-10 min-w-[150px] justify-center px-5 rounded-xl bg-white text-[#0A0A0A] font-semibold text-sm flex items-center gap-2 disabled:opacity-40 transition"
             >
