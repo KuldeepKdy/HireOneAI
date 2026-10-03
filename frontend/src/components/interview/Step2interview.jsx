@@ -14,6 +14,8 @@ import {
 } from "react-icons/fi";
 import CodeEditor from "./CodeEditor";
 import Timer from "./Timer";
+import { submitAnswer } from "../../apis/interview.api";
+import { useNavigate } from "react-router-dom";
 function Step2interview({ interviewData, user }) {
   // — State —
   const [question, setQuestion] = useState(interviewData.question);
@@ -48,6 +50,8 @@ function Step2interview({ interviewData, user }) {
   const videoSource = voiceGender === "female" ? femaleVideo : maleVideo;
   const progress = ((currentIndex + 1) / interviewData.totalQuestions) * 100;
   const showMicon = micOn && !isAIPlaying;
+
+  const navigate = useNavigate();
 
   //speach recognition
   useEffect(() => {
@@ -123,6 +127,124 @@ function Step2interview({ interviewData, user }) {
     const t = setInterval(() => setTimeLeft((p) => p - 1), 1000);
     return () => clearInterval(t);
   }, [timeLeft, timerActive]);
+
+  useEffect(() => {
+    const load = () => {
+      const voices = window.speechSynthesis.getVoices();
+
+      if (!voices.length) return;
+
+      const female = voices.find((v) => /zira|samantha|female/i.test(v.name));
+
+      const male = voices.find((v) => /david|mark|male/i.test(v.name));
+
+      if (female) {
+        setSelectedVoice(female);
+        setVoiceGender("female");
+      } else if (male) {
+        setSelectedVoice(male);
+        setVoiceGender("male");
+      } else {
+        setSelectedVoice(voices[0]);
+        setVoiceGender("female");
+      }
+    };
+
+    load();
+
+    window.speechSynthesis.onvoiceschanged = load;
+
+    return () => {
+      window.speechSynthesis.onvoiceschanged = null;
+    };
+  }, []);
+
+  const speakText = (text) => {
+    new Promise((resolve) => {
+      if (!window.speechSynthesis || !selectedVoice || !text?.trim()) {
+        resolve();
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+
+      setTimeout(() => {
+        const utter = new SpeechSynthesisUtterance(
+          text.replace(/,/g, " ... ").replace(/\./g, " ... "),
+        );
+
+        utter.voice = selectedVoice;
+        utter.rate = 0.92;
+        utter.pitch = 1.05;
+        utter.volume = 1;
+
+        utter.onstart = () => {
+          setIsAIPlaying(true);
+          stopMic();
+          aiVideoRef.current?.play();
+        };
+
+        utter.onend = () => {
+          aiVideoRef.current.pause();
+          setIsAIPlaying(false);
+
+          if (micOn) startMic();
+
+          setTimeout(() => {
+            setSubtitle("");
+            resolve();
+          }, 300);
+        };
+
+        setSubtitle(text);
+        window.speechSynthesis.speak(utter);
+      }, 150);
+    });
+  };
+
+  useEffect(() => {
+    if (!selectedVoice || introSpoken) return;
+
+    const runIntro = async () => {
+      setIntroSpoken(true);
+
+      await new Promise((r) => setTimeout(r, 1200));
+
+      await speakText(
+        `Welcome ${user?.userName.split(" ")[0] ?? "User"}! Let's begin your interview.`,
+      );
+
+      await new Promise((r) => setTimeout(r, 900));
+
+      await speakText(interviewData.question);
+    };
+
+    runIntro();
+  }, [selectedVoice]);
+
+  useEffect(() => {
+    if (!selectedVoice || !introSpoken) return;
+
+    const speakQuestion = async () => {
+      await new Promise((r) => setTimeout(r, 900));
+      await speakText(interviewData.question);
+    };
+
+    speakQuestion();
+  }, [question]);
+
+  useEffect(() => {
+    setQuestion(interviewData.question);
+    setCurrentIndex(interviewData.currentQuestion);
+    setTimeLeft(interviewData.question.timer || 60);
+  }, [interviewData]);
+
+  useEffect(() => {
+    setTimeLeft(question.timer || 60);
+    setTimerActive(true);
+  }, [question]);
+
+
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-3 sm:p-5">
