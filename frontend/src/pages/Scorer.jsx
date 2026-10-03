@@ -104,15 +104,22 @@ function Scorer({ user, setUser }) {
     }
     try {
       setLoading(true);
-      const coinResponse = await useCoins({
-        coins: 10,
-        action: "resume-scorer",
-      });
 
-      setUser((prev) => ({
-        ...prev,
-        interviewCoin: coinResponse?.interviewCoin,
-      }));
+      try {
+        const coinResponse = await useCoins({
+          coins: 10,
+          action: "resume-scorer",
+        });
+
+        setUser((prev) => ({
+          ...prev,
+          interviewCoin: coinResponse?.interviewCoin,
+        }));
+      } catch (e) {
+        setLoading(false);
+        alert("Failed to use coins.");
+        return;
+      }
 
       const formData = new FormData();
       formData.append("resume", file);

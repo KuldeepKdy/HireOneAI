@@ -11,15 +11,20 @@ function DownloadBtn({ docRef, user, setUser }) {
 
   const handleDownload = async () => {
     try {
-      const coinResponse = await useCoins({
-        coins: 10,
-        action: "resume-builder",
-      });
+      try {
+        const coinResponse = await useCoins({
+          coins: 10,
+          action: "download-pdf",
+        });
 
-      setUser((prev) => ({
-        ...prev,
-        interviewCoin: coinResponse?.interviewCoin,
-      }));
+        setUser((prev) => ({
+          ...prev,
+          interviewCoin: coinResponse?.interviewCoin,
+        }));
+      } catch (e) {
+        alert("Failed to use coins.");
+        return;
+      }
 
       handlePdf();
     } catch (error) {

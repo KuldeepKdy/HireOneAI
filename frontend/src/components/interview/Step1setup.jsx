@@ -46,6 +46,7 @@ function Step1setup({ user, setUser }) {
       } catch (e) {
         setUploading(false);
         alert("Failed to use coins.");
+        return;
       }
 
       const formData = new FormData();
@@ -81,6 +82,7 @@ function Step1setup({ user, setUser }) {
       } catch (e) {
         setStarting(false);
         alert("Failed to use coins.");
+        return;
       }
     }
     setStarting(false);
