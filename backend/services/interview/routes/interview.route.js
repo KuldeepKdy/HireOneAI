@@ -4,7 +4,7 @@ import {
   getInterview,
   startInterview,
   submitAnswer,
-} from "../controllers/interview-controller";
+} from "../controllers/interview-controller.js";
 
 const interviewRouter = express.Router();
 

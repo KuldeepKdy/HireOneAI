@@ -6,7 +6,7 @@ import {
   FiAward,
   FiTarget,
   FiTrendingUp,
-  Ficheck,
+  FiCheck,
   FiX,
 } from "react-icons/fi";
 import DownloadBtn from "../resume/DownloadBtn";
@@ -108,7 +108,7 @@ function Step3report({ report, user, setUser }) {
                       className="flex items-start gap-3 rounded-xl bg-green-500/5 border border-green-500/10 p-3.5"
                     >
                       <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0 text-xs">
-                        <Ficheck size={16} />
+                        <FiCheck size={16} />
                       </div>
                       <p className="text-sm text-zinc-300 leading-6">{s}</p>
                     </div>

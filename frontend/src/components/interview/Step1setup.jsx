@@ -10,8 +10,8 @@ import {
 } from "react-icons/fi";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useCoins } from "../../apis/user.api";
-import api from "../../utils/axios";
+import { useCoins } from "../../apis/user.api.js";
+import api from "../../utils/axios"; 
 import { setResume } from "../../redux/resumeSlice";
 import { startInterview } from "../../apis/interview.api.js";
 

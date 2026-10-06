@@ -10,7 +10,7 @@ export async function interviewNode(state) {
     resume: state.resume,
   });
 
-  return questions;
+  return { questions };
 }
 
 export async function feedbackNode(state) {
@@ -19,7 +19,7 @@ export async function feedbackNode(state) {
     answer: state.answer,
     difficulty: state.difficulty,
   });
-  return feedback;
+  return { feedback };
 }
 
 
@@ -29,5 +29,5 @@ export async function summaryNode(state) {
     type: state.type,
     questions: state.questions,
   });
-  return report;
+  return {report};
 }

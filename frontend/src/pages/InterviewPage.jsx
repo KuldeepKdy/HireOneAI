@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getInterview } from "../apis/interview.api";
 import Step2interview from "../components/interview/Step2interview";

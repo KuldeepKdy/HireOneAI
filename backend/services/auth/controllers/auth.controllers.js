@@ -125,6 +125,11 @@ export const useCoins = async (req, res) => {
       "EX",
       60 * 60 * 24 * 7,
     );
+    return res.status(200).json({
+      success: true,
+      message: "Coins used successfully",
+      interviewCoin: user.interviewCoin,
+    });
   } catch (error) {
     res.status(500).json({
       message: error.message,
