@@ -1,4 +1,6 @@
 
 .env
 # Google Cloud credentials
+node_modules
+node_modules/
 serviceAccountKey.json
