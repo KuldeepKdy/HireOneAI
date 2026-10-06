@@ -16,6 +16,7 @@ app.get("/", (req, res) => {
   res.send("hello from interview-Service");
 });
 
+//redirect on routes
 app.use("/", interviewRouter);
 
 // port ko listen karya hai
