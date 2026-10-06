@@ -25,6 +25,16 @@ export const getInterview = async (id) => {
 export const submitAnswer = async (data) => {
   try {
     const response = await api.post("/api/interview/answer", data);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export const getAllInterviews  = async () => {
+  try {
+    const response = await api.get("/api/interview/all");
     console.log(response.data);
     return response.data;
   } catch (error) {
