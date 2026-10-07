@@ -3,6 +3,7 @@ import express from "express";
 // to excess env data in this file
 import dotenv from "dotenv";
 import { connectDB } from "./configs/db";
+import roadmapRouter from "./routes/roadmap.routes";
 
 dotenv.config();
 
@@ -11,9 +12,7 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 6004;
 
-app.get("/", (req, res) => {
-  res.send("hello from roadmap-Service");
-});
+app.use("/", roadmapRouter);
 
 // port ko listen karya hai
 app.listen(PORT, () => {

@@ -27,6 +27,29 @@ const searchVideo = async (topic) => {
         };
       }
     }
+    query = `${topic} Tutorial`;
+    ({ data } = await axios.get(BASE_URL, {
+      params: {
+        key: process.env.YOUTUBE_API_KEY,
+        part: "snippet",
+        q: query,
+        maxResults: 1,
+        type: "video",
+      },
+    }));
+
+    if (data.items.length > 0) {
+      const video = data.items[0];
+
+      if (video.snippet.channelTitle.toLowerCase().includes("virtual code")) {
+        return {
+          title: video.snippet.title,
+          channel: video.snippet.channelTitle,
+          url: `https://www.youtube.com/watch?v=${video.id.videoId}`,
+        };
+      }
+    }
+
     return null;
   } catch (error) {
     console.log(error);
