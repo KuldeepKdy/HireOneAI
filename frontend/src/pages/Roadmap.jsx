@@ -1,8 +1,18 @@
 import { motion, AnimatePresence } from "motion/react";
-import { useState } from "react";
-import { FiChevronDown, FiClock } from "react-icons/fi";
+import { useEffect, useState } from "react";
+import {
+  FiCheck,
+  FiChevronDown,
+  FiClock,
+  FiFileText,
+  FiSend,
+  FiZap,
+} from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { BsRocketTakeoff } from "react-icons/bs";
+import { useCoins } from "../apis/user.api";
+import { useSelector } from "react-redux";
+import api from "../utils/axios";
 
 const PACKAGE_OPTIONS = ["10 LPA", "15 LPA", "20 LPA", "30 LPA", "40 LPA"];
 function Roadmap({ user, setUser }) {
@@ -17,6 +27,48 @@ function Roadmap({ user, setUser }) {
   const [historyLoading, setHistoryLoading] = useState(false);
   const [history, setHistory] = useState([]);
   const [error, setError] = useState("");
+
+  const { resume } = useSelector((state) => state.resume);
+
+ 
+
+  const handleGenerate = async () => {
+    if (!role.trim() || loading) return;
+    setLoading(true);
+    setError("");
+    try {
+      try {
+        const coinResponse = await useCoins({
+          coins: 20,
+          action: "roadmap-builder",
+        });
+        setUser((prev) => ({
+          ...prev,
+          interviewCoin: coinResponse?.interviewCoin,
+        }));
+      } catch (error) {
+        setLoading(false);
+        alert("Failed to use coins.");
+        return;
+      }
+
+      const response = await api.post("/api/roadmap/generate", {
+        role: role.trim(),
+        targetPackage,
+        useResume,
+        resume,
+      });
+      setRoadmap(response.data.data);
+      console.log(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Failed to generate roadmap:", error);
+      setError(
+        "Something went wrong while generating your roadmap. Please try again.",
+      );
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white text-[#0A0A0A] flex flex-col">
@@ -38,7 +90,9 @@ function Roadmap({ user, setUser }) {
               Resume Builder
             </span>
           </div>
-          <button className="flex h-8 items-center justify-center gap-1 rounded-lg border border-black/15 text-black/60 transition px-2 hover:border-[#A0A0A0] hover:text-[#0A0A0A] text-[10px]">
+          <button
+            className="flex h-8 items-center justify-center gap-1 rounded-lg border border-black/15 text-black/60 transition px-2 hover:border-[#A0A0A0] hover:text-[#0A0A0A] text-[10px]"
+          >
             <FiClock />
             <span className="hidden sm:inline">History</span>
           </button>
@@ -125,12 +179,88 @@ function Roadmap({ user, setUser }) {
                 />
               </motion.button>
 
-
-              
+              <AnimatePresence>
+                {packageOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 6, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 6, scale: 0.97 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute bottom-full mb-4 right-0 w-28 rounded-xl overflow-hidden border border-white/10 bg-[#0A0A0A] shadow-[0_8px_24px_rgba(0,0,0,0.35)] z-10"
+                  >
+                    {PACKAGE_OPTIONS.map((pkg) => (
+                      <button
+                        key={pkg}
+                        onClick={() => {
+                          setTargetPackage(pkg);
+                          setPackageOpen(false);
+                        }}
+                        className={`w-full text-left text-xs px-3 py-2 transition-colors ${
+                          pkg === targetPackage
+                            ? "bg-white/10 text-white"
+                            : "text-white/55 hover:bg-white/5 hover:text-white"
+                        }`}
+                      >
+                        {pkg}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
+
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              type="button"
+              onClick={() => setUseResume(!useResume)}
+              className={`flex items-center text-xs gap-1 px-2 py-2 rounded-xl ${
+                useResume
+                  ? "bg-emerald-500/10 text-emerald-400"
+                  : "bg-white/5 text-white/60"
+              }`}
+            >
+              {useResume ? (
+                <>
+                  <FiCheck size={12} />
+                  Added
+                </>
+              ) : (
+                <>
+                  <FiFileText size={12} />
+                  Resume
+                </>
+              )}
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              disabled={loading || !role.trim()}
+              onClick={handleGenerate}
+              className="relative flex items-center gap-1.5 text-xs px-3 sm:px-4 py-2 rounded-xl font-semibold text-[#0A0A0A] bg-white hover:bg-white/90 shadow-[0_2px_10px_rgba(255,255,255,0.12)] transition-all disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
+            >
+              {loading ? (
+                <motion.span
+                  animate={{ rotate: 360 }}
+                  transition={{ repeat: Infinity, ease: "linear", duration: 1 }}
+                  className="inline-block"
+                >
+                  <FiZap size={12} />
+                  <span className="hidden sm:inline">Generating...</span>
+                </motion.span>
+              ) : (
+                <>
+                  <FiSend size={12} />
+                  <span className="hidden sm:inline">Generate</span>
+                </>
+              )}
+            </motion.button>
           </motion.div>
         </div>
       </div>
+
+      
     </div>
   );
 }
