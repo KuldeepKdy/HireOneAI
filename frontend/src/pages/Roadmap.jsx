@@ -14,6 +14,7 @@ import { BsRocketTakeoff } from "react-icons/bs";
 import { useCoins } from "../apis/user.api";
 import { useSelector } from "react-redux";
 import api from "../utils/axios";
+import RoadmapResult from "../components/roadmap/RoadmapResult";
 
 const PACKAGE_OPTIONS = ["10 LPA", "15 LPA", "20 LPA", "30 LPA", "40 LPA"];
 function Roadmap({ user, setUser }) {
@@ -31,20 +32,20 @@ function Roadmap({ user, setUser }) {
 
   const { resume } = useSelector((state) => state.resume);
 
-  useEffect(() => {
-    const getAllRoadmaps = async () => {
-      setHistoryLoading(true);
-      try {
-        const response = await api.get("/api/roadmap/all");
-        console.log(response.data);
-        setHistory(response.data.data);
-        setHistoryLoading(false);
-      } catch (error) {
-        console.log(error);
-        setHistoryLoading(false);
-      }
-    };
+  const getAllRoadmaps = async () => {
+    setHistoryLoading(true);
+    try {
+      const response = await api.get("/api/roadmap/all");
+      console.log(response.data);
+      setHistory(response.data.data);
+      setHistoryLoading(false);
+    } catch (error) {
+      console.log(error);
+      setHistoryLoading(false);
+    }
+  };
 
+  useEffect(() => {
     getAllRoadmaps();
   }, []);
 
@@ -85,7 +86,9 @@ function Roadmap({ user, setUser }) {
         resume,
       });
       setRoadmap(response.data.data);
-      console.log(response.data);
+      getAllRoadmaps();
+
+      //   console.log(response.data);
       setLoading(false);
     } catch (error) {
       console.error("Failed to generate roadmap:", error);
@@ -171,7 +174,10 @@ function Roadmap({ user, setUser }) {
                 </div>
               </motion.div>
             ) : (
-              <></>
+              <RoadmapResult
+                roadmap={roadmap}
+                onClear={() => setRoadmap(null)}
+              />
             )}
           </AnimatePresence>
         </div>
