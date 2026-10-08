@@ -6,6 +6,7 @@ import {
   FiClock,
   FiFileText,
   FiSend,
+  FiX,
   FiZap,
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
@@ -30,7 +31,32 @@ function Roadmap({ user, setUser }) {
 
   const { resume } = useSelector((state) => state.resume);
 
- 
+  useEffect(() => {
+    const getAllRoadmaps = async () => {
+      setHistoryLoading(true);
+      try {
+        const response = await api.get("/api/roadmap/all");
+        console.log(response.data);
+        setHistory(response.data.data);
+        setHistoryLoading(false);
+      } catch (error) {
+        console.log(error);
+        setHistoryLoading(false);
+      }
+    };
+
+    getAllRoadmaps();
+  }, []);
+
+  const getInterviewById = async (id) => {
+    try {
+      const response = await api.get(`/api/roadmap/${id}`);
+      console.log(response.data);
+      setRoadmap(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleGenerate = async () => {
     if (!role.trim() || loading) return;
@@ -91,6 +117,7 @@ function Roadmap({ user, setUser }) {
             </span>
           </div>
           <button
+            onClick={() => setHistoryOpen(!historyOpen)}
             className="flex h-8 items-center justify-center gap-1 rounded-lg border border-black/15 text-black/60 transition px-2 hover:border-[#A0A0A0] hover:text-[#0A0A0A] text-[10px]"
           >
             <FiClock />
@@ -102,7 +129,7 @@ function Roadmap({ user, setUser }) {
       <main className="flex-1 overflow-y-auto pb-28 sm:pb-32 pt-16 sm:pt-20">
         <div className="max-w-3xl mx-auto px-3 sm:px-4 pt-5 sm:pt-6">
           <AnimatePresence mode="wait">
-            {roadmap && (
+            {!roadmap ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -143,6 +170,8 @@ function Roadmap({ user, setUser }) {
                   ))}
                 </div>
               </motion.div>
+            ) : (
+              <></>
             )}
           </AnimatePresence>
         </div>
@@ -260,7 +289,73 @@ function Roadmap({ user, setUser }) {
         </div>
       </div>
 
-      
+      <AnimatePresence>
+        {historyOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setHistoryOpen(false)}
+              className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
+            />
+
+            <motion.aside
+              initial={{ x: 320 }}
+              animate={{ x: 0 }}
+              exit={{ x: 320 }}
+              transition={{ type: "spring", stiffness: 320, damping: 32 }}
+              className="fixed right-0 top-0 bottom-0 z-50 w-[280px] sm:w-[300px] max-w-[85vw] bg-white border-l border-black/8 flex flex-col overflow-y-auto shadow-[0_0_40px_rgba(0,0,0,0.1)]"
+            >
+              <div className="flex items-center justify-between px-4 py-3 sm:py-4 border-b border-black/8 sticky top-0 bg-white/90 backdrop-blur-xl">
+                <span className="text-sm font-semibold text-[#0A0A0A]">
+                  Previous Roadmaps
+                </span>
+                <button
+                  onClick={() => setHistoryOpen(false)}
+                  className="text-black/35 hover:text-[#00A0A0] transition-colors"
+                >
+                  <FiX size={16} />
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-2 p-3">
+                {historyLoading ? (
+                  <p className="text-xs text-black/35 text-center py-6">
+                    Loading...
+                  </p>
+                ) : history.length === 0 ? (
+                  <p className="text-xs text-black/35 text-center py-6">
+                    No roadmaps yet.
+                  </p>
+                ) : (
+                  history.map((h, i) => (
+                    <button
+                      key={i}
+                      onClick={() => {
+                        getInterviewById(h._id);
+                        setHistoryOpen(false);
+                      }}
+                      className="relative overflow-hidden text-left p-4 rounded-xl bg-[#000]/90 border border-white/10"
+                    >
+                      <h3 className="text-white font-semibold">{h.title}</h3>
+                      <div className="flex justify-between items-center my-1">
+                        <span className="text-violet-400 text-xs">
+                          {h.targetPackage}
+                        </span>
+                        <p className="text-xs text-white/40">{h.duration}</p>
+                      </div>
+                      <p className="text-xs text-white/30 mt-1">
+                        {new Date(h.createdAt).toLocaleDateString()}
+                      </p>
+                    </button>
+                  ))
+                )}
+              </div>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
