@@ -13,6 +13,7 @@ import ResumeBuilder from "./pages/ResumeBuilder.jsx";
 import InterviewStart from "./pages/InterviewStart.jsx";
 import InterviewPage from "./pages/InterviewPage.jsx";
 import InterviewReport from "./pages/InterviewReport.jsx";
+import Roadmap from "./pages/Roadmap.jsx";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -110,6 +111,16 @@ function App() {
           element={
             user ? (
               <InterviewReport user={user} setUser={setUser} />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
+        <Route
+          path="/roadmap"
+          element={
+            user ? (
+              <Roadmap user={user} setUser={setUser} />
             ) : (
               <Navigate to="/" replace />
             )
