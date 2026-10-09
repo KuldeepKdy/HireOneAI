@@ -307,9 +307,9 @@ export const getAllInterviews = async (req, res) => {
 
     const HrInterviews = completed.filter((item) => item.type === "hr");
 
-    const technicalData = getAverageData(technicalInterviews);
+    const technicalData = await getAverageData(technicalInterviews);
 
-    const hrData = getAverageData(HrInterviews);
+    const hrData = await getAverageData(HrInterviews);
 
     const technicalCount = technicalInterviews.length;
 

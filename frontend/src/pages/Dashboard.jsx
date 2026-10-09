@@ -25,17 +25,40 @@ function Dashboard({ user, setUser }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchInterviews = async () => {
+  const fetchInterviews = async () => {
+    try {
       const response = await getAllInterviews();
-      setStats(response.stats);
-      setTechnicalData(response.technicalData);
-      setHrData(response.hrData);
-      setTechnicalCount(response.technicalCount);
-      setHrCount(response.hrCount);
-    };
 
-    fetchInterviews();
-  }, []);
+      console.log("Full API response:", response);
+
+      setStats(response?.stats ?? {
+        totalInterviews: 0,
+        totalQuestions: 0,
+        completed: 0,
+        averageScore: 0,
+      });
+
+      setTechnicalData(
+        Array.isArray(response?.technicalData)
+          ? response.technicalData
+          : []
+      );
+
+      setHrData(
+        Array.isArray(response?.hrData)
+          ? response.hrData
+          : []
+      );
+
+      setTechnicalCount(response?.technicalCount ?? 0);
+      setHrCount(response?.hrCount ?? 0);
+    } catch (error) {
+      console.error("Failed to fetch interviews:", error);
+    }
+  };
+
+  fetchInterviews();
+}, []);
 
   const handleLogout = async () => {
     try {
@@ -137,9 +160,9 @@ function Dashboard({ user, setUser }) {
         </motion.div>
 
         <InterviewGraph
-          technicalData={technicalData}
+          technicalData={technicalData ?? []}
           technicalCount={technicalCount}
-          hrData={hrData}
+          hrData={hrData ??[]}
           hrCount={hrCount}
         />
       </motion.main>

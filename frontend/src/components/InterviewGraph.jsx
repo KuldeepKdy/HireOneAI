@@ -20,6 +20,9 @@ function CustomTooltip({ active, payload }) {
 }
 
 function RadarCard({ title, data, color, index }) {
+    const safeChartData = Array.isArray(data)
+  ? data
+  : [];
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -31,7 +34,7 @@ function RadarCard({ title, data, color, index }) {
       <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent pointer-events-none" />
       <div className="relative">
         <ResponsiveContainer width="100%" height={180}>
-          <RadarChart data={data} cx="50%" cy="50%" outerRadius="68%">
+          <RadarChart data={safeChartData} cx="50%" cy="50%" outerRadius="68%">
             <PolarGrid stroke="rgba(255,255,255,0.08)" gridType="circle" />
             <PolarAngleAxis
               dataKey="skill"
