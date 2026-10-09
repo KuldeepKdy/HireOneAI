@@ -1,4 +1,4 @@
-import { SystemMessage } from "@langchain/core/messages";
+import { SystemMessage,HumanMessage } from "@langchain/core/messages";
 import llm from "../configs/llm.js";
 import searchVideo from "../configs/youtube.js";
 
@@ -58,6 +58,7 @@ Return format:
 
         try {
           video = await searchVideo(module.title);
+          console.log("Video result:", module.title, video);
         } catch (err) {
           console.log(err.message);
         }

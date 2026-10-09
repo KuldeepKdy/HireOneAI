@@ -2,8 +2,8 @@ import express from "express";
 
 // to excess env data in this file
 import dotenv from "dotenv";
-import { connectDB } from "./configs/db";
-import roadmapRouter from "./routes/roadmap.routes";
+import { connectDB } from "./configs/db.js";
+import roadmapRouter from "./routes/roadmap.routes.js";
 
 dotenv.config();
 

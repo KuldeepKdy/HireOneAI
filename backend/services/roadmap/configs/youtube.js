@@ -1,60 +1,68 @@
 import dotenv from "dotenv";
 dotenv.config();
+
 import axios from "axios";
 
 const BASE_URL = "https://www.googleapis.com/youtube/v3/search";
 
 const searchVideo = async (topic) => {
-  try {
-    let query = `Virtual Code ${topic}`;
-    let { data } = await axios.get(BASE_URL, {
-      params: {
-        key: process.env.YOUTUBE_API_KEY,
-        part: "snippet",
-        q: query,
-        maxResults: 1,
-        type: "video",
-      },
-    });
-    if (data.items.length > 0) {
-      const video = data.items[0];
+try {
+const search = async (query) => {
+const { data } = await axios.get(BASE_URL, {
+params: {
+key: process.env.YOUTUBE_API_KEY,
+part: "snippet",
+q: query,
+maxResults: 5,
+type: "video",
+},
+});
 
-      if (video.snippet.channelTitle.toLowerCase().includes("virtual code")) {
-        return {
-          title: video.snippet.title,
-          channel: video.snippet.channelTitle,
-          url: `https://www.youtube.com/watch?v=${video.id.videoId}`,
-        };
-      }
-    }
-    query = `${topic} Tutorial`;
-    ({ data } = await axios.get(BASE_URL, {
-      params: {
-        key: process.env.YOUTUBE_API_KEY,
-        part: "snippet",
-        q: query,
-        maxResults: 1,
-        type: "video",
-      },
-    }));
+  return data.items || [];
+};
 
-    if (data.items.length > 0) {
-      const video = data.items[0];
+// First, search for the topic
+let videos = await search(`${topic} tutorial`);
 
-      if (video.snippet.channelTitle.toLowerCase().includes("virtual code")) {
-        return {
-          title: video.snippet.title,
-          channel: video.snippet.channelTitle,
-          url: `https://www.youtube.com/watch?v=${video.id.videoId}`,
-        };
-      }
-    }
+// Prefer videos from Virtual Code
+let video = videos.find((item) =>
+  item.snippet.channelTitle
+    .toLowerCase()
+    .includes("virtual code")
+);
 
-    return null;
-  } catch (error) {
-    console.log(error);
-    return null;
-  }
+// Fallback to the first result
+if (!video && videos.length > 0) {
+  video = videos[0];
+}
+
+// Try a broader search if no video was found
+if (!video) {
+  videos = await search(topic);
+  video = videos[0] || null;
+}
+
+if (!video) {
+  console.log("No video found for:", topic);
+  return null;
+}
+
+return {
+  title: video.snippet.title,
+  channel: video.snippet.channelTitle,
+  url: `https://www.youtube.com/watch?v=${video.id.videoId}`,
+};
+
+} catch (error) {
+console.error(
+`YouTube search failed for "${topic}":`,
+error.response?.data || error.message
+);
+
+
+return null;
+
+}
 };
 
 export default searchVideo;
