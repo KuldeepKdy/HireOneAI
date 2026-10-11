@@ -2,7 +2,7 @@ import express from "express";
 
 // to excess env data in this file
 import dotenv from "dotenv";
-import { connectDB } from "./configs/db";
+import { connectDB } from "./configs/db.js";
 
 dotenv.config();
 
