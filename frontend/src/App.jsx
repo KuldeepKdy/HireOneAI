@@ -14,6 +14,7 @@ import InterviewStart from "./pages/InterviewStart.jsx";
 import InterviewPage from "./pages/InterviewPage.jsx";
 import InterviewReport from "./pages/InterviewReport.jsx";
 import Roadmap from "./pages/Roadmap.jsx";
+import Billing from "./pages/Billing.jsx";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -121,6 +122,16 @@ function App() {
           element={
             user ? (
               <Roadmap user={user} setUser={setUser} />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
+        <Route
+          path="/billing"
+          element={
+            user ? (
+              <Billing user={user} setUser={setUser} />
             ) : (
               <Navigate to="/" replace />
             )

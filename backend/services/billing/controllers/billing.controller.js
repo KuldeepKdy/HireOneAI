@@ -4,7 +4,7 @@ import crypto from "crypto";
 
 const PLANS = {
   starter: {
-    amount: 99,
+    amount: 199,
     interviewCoins: 300,
   },
 };
