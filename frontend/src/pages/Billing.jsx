@@ -4,6 +4,7 @@ import { FiMenu, FiX } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { GiTwoCoins } from "react-icons/gi";
 import PricingCard from "../components/PricingCard.jsx";
+import api from "../utils/axios.js";
 
 const plan = [
   {
@@ -39,6 +40,56 @@ const plan = [
 function Billing({ user, setUser }) {
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
+
+  const handlePayment = async (plan) => {
+    if (plan.disabled) return;
+    try {
+      const result = await api.post("/api/billing/create", {
+        planId: plan.title.toLowerCase(),
+      });
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: result.data.order.amount,
+        currency: result.data.order.currency,
+        name: "FresherAI",
+        description: `${plan.title} - ${plan.coins} Interview Coins`,
+        order_id: result.data.order.id,
+
+        handler: async function (response) {
+          try {
+            await api.post("/api/billing/verify", response);
+
+            const coinRes = await api.post("/api/auth/add-coins", {
+              coins: plan.coins,
+            });
+
+            setUser((prev) => ({
+              ...prev,
+              interviewCoin: coinRes.data.interviewCoin,
+            }));
+
+            alert("Payment Successful 🎉");
+            navigate("/dashboard");
+          } catch (error) {
+            console.log(error);
+            alert(
+              error?.response?.data?.message ||
+                "Payment Verification Failed 😔",
+            );
+          }
+        },
+        theme: {
+          color: "#000000",
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white text-[#0A0A0A]">
@@ -131,7 +182,11 @@ function Billing({ user, setUser }) {
 
         <div className="mt-8 grid place-items-center gap-3 md:grid-cols-2">
           {plan.map((plan) => (
-            <PricingCard key={plan.title} {...plan} onBuy={() => handlePayment(plan)} />
+            <PricingCard
+              key={plan.title}
+              {...plan}
+              onBuy={() => handlePayment(plan)}
+            />
           ))}
         </div>
       </div>
