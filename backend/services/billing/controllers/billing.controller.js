@@ -9,7 +9,7 @@ const PLANS = {
   },
 };
 
-export const createBilling = async (req, res) => {
+export const createOrder = async (req, res) => {
   try {
     const { planId } = req.body;
     const userId = req.headers["x-user-id"];

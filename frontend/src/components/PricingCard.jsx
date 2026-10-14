@@ -12,10 +12,13 @@ function PricingCard({
   onBuy,
 }) {
   return (
-    <div className="relative w-full max-w-[320px] rounded-2xl overflow-hidden border p-5 transition-all">
-      {popular
-        ? "border-violet-400/30 bg-[#000000]/90 backdrop-blur-2xl shadow-[0_8px_40px_rgba(124,58,237,0.2)]"
-        : "border-white/10 bg-[#000000]/90 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.25)]"}
+    <div
+      className={`relative w-full max-w-[320px] rounded-2xl overflow-hidden border p-5 transition-all ${
+        popular
+          ? "border-violet-400/30 bg-[#000000]/90 backdrop-blur-2xl shadow-[0_8px_40px_rgba(124,58,237,0.2)]"
+          : "border-white/10 bg-[#000000]/90 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.25)]"
+      }`}
+    >
       <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent pointer-events-none" />
       {popular && (
         <div className="absolute -top-8 -right-8 w-28 h-28 bg-violet-500/20 rounded-full blur-3xl pointer-events-none" />

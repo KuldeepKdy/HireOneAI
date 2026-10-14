@@ -181,9 +181,9 @@ function Billing({ user, setUser }) {
         </div>
 
         <div className="mt-8 grid place-items-center gap-3 md:grid-cols-2">
-          {plan.map((plan) => (
+          {plan.map((plan,index) => (
             <PricingCard
-              key={plan.title}
+              key={index}
               {...plan}
               onBuy={() => handlePayment(plan)}
             />
