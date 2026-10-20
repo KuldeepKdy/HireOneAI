@@ -5,11 +5,11 @@ WORKDIR /app
 COPY package*json ./
 RUN npm install
 
-COPY ./services/billing/package*json ./services/interview/
+COPY ./services/interview/package*json ./services/interview/
 
-RUN npm install
+RUN cd services/interview && npm install
 
-COPY services/billing ./services/interview
+COPY services/interview ./services/interview
 COPY shared ./shared
 
 WORKDIR /app/services/interview
